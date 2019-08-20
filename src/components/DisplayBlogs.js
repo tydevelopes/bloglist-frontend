@@ -1,7 +1,12 @@
 import React from 'react';
 import Blog from './Blog';
 
-const DisplayBlogs = ({ blogs, userName, handleLogout }) => {
+const DisplayBlogs = ({
+  blogs,
+  userName,
+  handleLogout,
+  incrementLikesByOne
+}) => {
   return (
     <div>
       <h2>blogs</h2>
@@ -10,7 +15,11 @@ const DisplayBlogs = ({ blogs, userName, handleLogout }) => {
         <button onClick={handleLogout}>logout</button>
       </p>
       {blogs.map(blog => (
-        <Blog blog={blog} key={blog.id} />
+        <Blog
+          blog={blog}
+          incrementLikesByOne={incrementLikesByOne}
+          key={blog.id}
+        />
       ))}
     </div>
   );

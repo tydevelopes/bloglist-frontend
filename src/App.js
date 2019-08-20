@@ -17,10 +17,10 @@ function App() {
   const [blogTitle, setBlogTitle] = useState('');
   const [blogAuthor, setBlogAuthor] = useState('');
   const [blogURL, setBlogURL] = useState('');
+  const [shouldShowNoteForm, setShouldShowNoteForm] = useState(false);
 
   useEffect(() => {
     const loggedUserJSON = localStorage.getItem('loggedBlogAppUser');
-    console.log(loggedUserJSON);
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
@@ -95,6 +95,9 @@ function App() {
     setBlogURL(value);
   };
 
+  const toggleNoteFormVisibility = () =>
+    setShouldShowNoteForm(!shouldShowNoteForm);
+
   const addNewBlog = async event => {
     event.preventDefault();
     try {
@@ -121,6 +124,22 @@ function App() {
       }
     } finally {
       removeNotification();
+      toggleNoteFormVisibility();
+    }
+  };
+
+  const incrementLikesByOne = async (id, oldLikes) => {
+    const newObject = {
+      likes: oldLikes + 1
+    };
+    try {
+      const { likes } = await blogService.update(id, newObject);
+
+      return likes;
+    } catch (error) {
+      setMessage({ content: error.message, type: 'failure' });
+    } finally {
+      removeNotification();
     }
   };
 
@@ -133,12 +152,15 @@ function App() {
             blogs={blogs}
             userName={user.name}
             handleLogout={handleLogout}
+            incrementLikesByOne={incrementLikesByOne}
           />
           <BlogForm
             handleTitleInput={handleTitleInput}
             handleAuthorInput={handleAuthorInput}
             handleURLInput={handleURLInput}
             addNewBlog={addNewBlog}
+            shouldShowNoteForm={shouldShowNoteForm}
+            toggleNoteFormVisibility={toggleNoteFormVisibility}
           />
         </>
       ) : (
