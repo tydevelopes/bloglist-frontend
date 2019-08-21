@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 
-const BlogDetails = ({ blog, incrementLikesByOne }) => {
+const BlogDetails = ({ blog, incrementLikesByOne, deleteBlog, user }) => {
   const [newLikes, setNewLikes] = useState(blog.likes);
 
   const updateLikes = async () => {
-    console.log('id', blog.id);
     const likes = await incrementLikesByOne(blog.id, newLikes);
     setNewLikes(likes);
-    console.log('likes: ', likes);
   };
+
   return (
     <div>
       <div>
@@ -21,8 +20,13 @@ const BlogDetails = ({ blog, incrementLikesByOne }) => {
         <button onClick={updateLikes}>like</button>
       </div>
       <div>added by {blog.user.username}</div>
+      {blog.user.username === user.username ? (
+        <button onClick={() => deleteBlog(blog.id)}>remove</button>
+      ) : null}
     </div>
   );
 };
 
 export default BlogDetails;
+
+//FIXME:- Likes not updating when BlogDetails closed

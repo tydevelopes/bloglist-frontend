@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import BlogDetails from './BlogDetails';
 
-const Blog = ({ blog, incrementLikesByOne }) => {
+const Blog = ({ blog, incrementLikesByOne, deleteBlog, user }) => {
   const [shouldShowBlogDetails, setShouldShowBlogDetails] = useState(false);
 
   const toggleBlogDetailsVisibility = () =>
@@ -13,7 +13,12 @@ const Blog = ({ blog, incrementLikesByOne }) => {
         {blog.title} by {blog.author}
       </div>
       {shouldShowBlogDetails && (
-        <BlogDetails blog={blog} incrementLikesByOne={incrementLikesByOne} />
+        <BlogDetails
+          blog={blog}
+          incrementLikesByOne={incrementLikesByOne}
+          deleteBlog={deleteBlog}
+          user={user}
+        />
       )}
     </div>
   );

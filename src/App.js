@@ -33,6 +33,7 @@ function App() {
   // Helper functions
   const fetchBlogs = async () => {
     const blogs = await blogService.getAll();
+    blogs.sort((a, b) => a.likes - b.likes);
     setBlogs(blogs);
   };
 
@@ -53,7 +54,6 @@ function App() {
 
   const handleLogin = async event => {
     event.preventDefault();
-    console.log('logging in with', username, password);
 
     try {
       const user = await loginService.login({ username, password });
@@ -65,7 +65,7 @@ function App() {
       setUsername('');
       setPassword('');
       setIsUserLoggedIn(true);
-      setMessage({ content: `Welcome ${user.name}`, type: 'success' });
+      setMessage({ content: `Welcome ${user.username}`, type: 'success' });
       fetchBlogs();
     } catch (exception) {
       console.log('error logging in: ', exception);
@@ -78,20 +78,17 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('loggedBlogAppUser');
     setIsUserLoggedIn(false);
-    setMessage({ content: `Goodbye ${user.name}`, type: 'success' });
+    setMessage({ content: `Goodbye ${user.username}`, type: 'success' });
     removeNotification();
   };
 
   const handleTitleInput = value => {
-    console.log(value);
     setBlogTitle(value);
   };
   const handleAuthorInput = value => {
-    console.log(value);
     setBlogAuthor(value);
   };
   const handleURLInput = value => {
-    console.log(value);
     setBlogURL(value);
   };
 
@@ -110,7 +107,7 @@ function App() {
         url: blogURL
       };
       const returnedBlog = await blogService.create(blogObject);
-      setBlogs([...blogs, returnedBlog]);
+      setBlogs([...blogs, returnedBlog].sort((a, b) => a.likes - b.likes));
       setBlogTitle('');
       setBlogAuthor('');
       setBlogURL('');
@@ -134,10 +131,26 @@ function App() {
     };
     try {
       const { likes } = await blogService.update(id, newObject);
-
       return likes;
     } catch (error) {
       setMessage({ content: error.message, type: 'failure' });
+    } finally {
+      removeNotification();
+    }
+  };
+
+  const deleteBlog = async id => {
+    try {
+      await blogService.remove(id);
+      const updatedBlogs = blogs.filter(blog => blog.id !== id);
+      console.log('updated blogs: ', updatedBlogs);
+      setBlogs(updatedBlogs);
+      setMessage({ content: 'Blog successfully deleted', type: 'success' });
+    } catch (error) {
+      setMessage({
+        content: `fail to remove blog: ${error.message}`,
+        type: 'failure'
+      });
     } finally {
       removeNotification();
     }
@@ -150,9 +163,10 @@ function App() {
         <>
           <DisplayBlogs
             blogs={blogs}
-            userName={user.name}
+            user={user}
             handleLogout={handleLogout}
             incrementLikesByOne={incrementLikesByOne}
+            deleteBlog={deleteBlog}
           />
           <BlogForm
             handleTitleInput={handleTitleInput}
