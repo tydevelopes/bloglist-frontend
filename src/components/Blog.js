@@ -9,7 +9,7 @@ const Blog = ({ blog, incrementLikesByOne, deleteBlog, user }) => {
 
   return (
     <div className="blog">
-      <div onClick={toggleBlogDetailsVisibility}>
+      <div className="blog-heading" onClick={toggleBlogDetailsVisibility}>
         {blog.title} by {blog.author}
       </div>
       {shouldShowBlogDetails && (

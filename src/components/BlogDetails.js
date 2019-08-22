@@ -9,7 +9,7 @@ const BlogDetails = ({ blog, incrementLikesByOne, deleteBlog, user }) => {
   };
 
   return (
-    <div>
+    <div className="blog-details">
       <div>
         <a href={blog.url} target="_blank" rel="noopener noreferrer">
           {blog.url}
