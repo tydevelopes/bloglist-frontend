@@ -1,9 +1,9 @@
 import React from 'react';
 
 const BlogForm = ({
-  handleTitleInput,
-  handleAuthorInput,
-  handleURLInput,
+  title,
+  author,
+  url,
   addNewBlog,
   shouldShowNoteForm,
   toggleNoteFormVisibility
@@ -15,30 +15,20 @@ const BlogForm = ({
         <form onSubmit={addNewBlog}>
           <div>
             Title
-            <input
-              type="text"
-              name="Title"
-              onChange={({ target }) => handleTitleInput(target.value)}
-            />
+            <input {...title} />
           </div>
           <div>
             Author
-            <input
-              type="text"
-              name="Author"
-              onChange={({ target }) => handleAuthorInput(target.value)}
-            />
+            <input {...author} />
           </div>
           <div>
             URL
-            <input
-              type="text"
-              name="URL"
-              onChange={({ target }) => handleURLInput(target.value)}
-            />
+            <input {...url} />
           </div>
           <button type="submit">create</button>
-          <button type="button" onClick={toggleNoteFormVisibility}>cancel</button>
+          <button type="button" onClick={toggleNoteFormVisibility}>
+            cancel
+          </button>
         </form>
       </div>
     );
