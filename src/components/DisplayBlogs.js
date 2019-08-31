@@ -9,11 +9,12 @@ const DisplayBlogs = ({
   incrementLikesByOne,
   deleteBlog
 }) => {
+  console.log('user', user);
   return (
     <div>
       <h2>blogs</h2>
       <p>
-        {user.userName} logged in
+        {user.username} logged in
         <button onClick={handleLogout}>logout</button>
       </p>
       {blogs.map(blog => (
