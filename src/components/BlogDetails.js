@@ -1,11 +1,33 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
+import { likeBlog, removeBlog } from '../reducers/blogReducer';
+import { notification } from '../reducers/messageReducer';
 
-const BlogDetails = ({ blog, incrementLikesByOne, deleteBlog, user }) => {
-  const [newLikes, setNewLikes] = useState(blog.likes);
+const BlogDetails = ({
+  logStatus,
+  blog,
+  likeBlog,
+  removeBlog,
+  notification
+}) => {
+  const handleDelete = async () => {
+    try {
+      removeBlog(blog.id);
+      notification({ content: 'Blog successfully deleted', type: 'success' });
+    } catch (error) {
+      notification({
+        content: `fail to remove blog: ${error.message}`,
+        type: 'failure'
+      });
+    }
+  };
 
-  const updateLikes = async () => {
-    const likes = await incrementLikesByOne(blog.id, newLikes);
-    setNewLikes(likes);
+  const handleLike = () => {
+    try {
+      likeBlog(blog);
+    } catch (error) {
+      notification({ content: error.message, type: 'failure' });
+    }
   };
 
   return (
@@ -16,17 +38,31 @@ const BlogDetails = ({ blog, incrementLikesByOne, deleteBlog, user }) => {
         </a>
       </div>
       <div>
-        {newLikes} likes
-        <button onClick={updateLikes}>like</button>
+        {blog.likes} likes
+        <button onClick={handleLike}>like</button>
       </div>
       <div>added by {blog.user.username}</div>
-      {blog.user.username === user.username ? (
-        <button onClick={() => deleteBlog(blog.id)}>remove</button>
+      {blog.user.username === logStatus.user.username ? (
+        <button onClick={handleDelete}>remove</button>
       ) : null}
     </div>
   );
 };
 
-export default BlogDetails;
+const mapStateToProps = ({ logStatus }, { blog }) => {
+  return {
+    logStatus,
+    blog
+  };
+};
 
-//FIXME:- Likes not updating when BlogDetails closed
+const mapDispatchToProps = {
+  likeBlog,
+  removeBlog,
+  notification
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(BlogDetails);

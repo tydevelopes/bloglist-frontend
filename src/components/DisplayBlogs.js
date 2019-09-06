@@ -1,40 +1,45 @@
 import React from 'react';
 import Blog from './Blog';
-import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { logout } from '../reducers/loginReducer';
+import { notification } from '../reducers/messageReducer';
 
-const DisplayBlogs = ({
-  blogs,
-  user,
-  handleLogout,
-  incrementLikesByOne,
-  deleteBlog
-}) => {
-  console.log('user', user);
+const DisplayBlogs = ({ blogs, logStatus, logout, notification }) => {
+  const handleLogout = () => {
+    logout();
+    notification({
+      content: `Goodbye ${logStatus.user.username}`,
+      type: 'success'
+    });
+  };
+
   return (
     <div>
       <h2>blogs</h2>
       <p>
-        {user.username} logged in
+        {logStatus.user.username} logged in
         <button onClick={handleLogout}>logout</button>
       </p>
       {blogs.map(blog => (
-        <Blog
-          blog={blog}
-          incrementLikesByOne={incrementLikesByOne}
-          deleteBlog={deleteBlog}
-          user={user}
-          key={blog.id}
-        />
+        <Blog blog={blog} key={blog.id} />
       ))}
     </div>
   );
 };
 
-DisplayBlogs.propTypes = {
-  blogs: PropTypes.array.isRequired,
-  user: PropTypes.object.isRequired,
-  handleLogout: PropTypes.func.isRequired,
-  incrementLikesByOne: PropTypes.func.isRequired,
-  deleteBlog: PropTypes.func.isRequired
+const mapStateToProps = ({ blogs, logStatus }) => {
+  return {
+    blogs,
+    logStatus
+  };
 };
-export default DisplayBlogs;
+
+const mapDispatchToProps = {
+  logout,
+  notification
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DisplayBlogs);

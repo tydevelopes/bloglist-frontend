@@ -1,27 +1,31 @@
-import React, { useState } from 'react';
+import React from 'react';
 import BlogDetails from './BlogDetails';
+import { connect } from 'react-redux';
+import { toggleVisibility } from '../reducers/blogDetailsVisibilityReducer';
 
-const Blog = ({ blog, incrementLikesByOne, deleteBlog, user }) => {
-  const [shouldShowBlogDetails, setShouldShowBlogDetails] = useState(false);
-
-  const toggleBlogDetailsVisibility = () =>
-    setShouldShowBlogDetails(!shouldShowBlogDetails);
-
+const Blog = ({ blog, shouldShowBlogDetails, toggleVisibility }) => {
   return (
     <div className="blog">
-      <div className="blog-heading" onClick={toggleBlogDetailsVisibility}>
+      <div className="blog-heading" onClick={toggleVisibility}>
         {blog.title} by {blog.author}
       </div>
-      {shouldShowBlogDetails && (
-        <BlogDetails
-          blog={blog}
-          incrementLikesByOne={incrementLikesByOne}
-          deleteBlog={deleteBlog}
-          user={user}
-        />
-      )}
+      {shouldShowBlogDetails && <BlogDetails blog={blog} />}
     </div>
   );
 };
 
-export default Blog;
+const mapStateToProps = ({ shouldShowBlogDetails }, { blog }) => {
+  return {
+    blog,
+    shouldShowBlogDetails
+  };
+};
+
+const mapDispatchToProps = {
+  toggleVisibility
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Blog);
